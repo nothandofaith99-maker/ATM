@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Northstar ATM</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172033;
+      background: #f3f5f8;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; }
+    button, input { font: inherit; }
+    .topbar {
+      height: 76px; padding: 0 max(24px, calc((100vw - 1060px) / 2));
+      display: flex; align-items: center; justify-content: space-between;
+      color: white; background: #111827;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; letter-spacing: .01em; }
+    .brand-mark {
+      display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px;
+      background: #c9f36a; color: #182116; font-size: 18px;
+    }
+    .secure { color: #aeb9ca; font-size: 13px; }
+    main { width: min(100% - 32px, 960px); margin: 56px auto; }
+    .intro { margin-bottom: 27px; }
+    .eyebrow { color: #668d24; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 9px 0 7px; font-size: clamp(29px, 5vw, 39px); letter-spacing: -.045em; }
+    .subheading { margin: 0; color: #667085; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(250px, .85fr); gap: 20px; align-items: start; }
+    .card { border: 1px solid #e6e9ef; border-radius: 18px; background: white; box-shadow: 0 10px 32px #2634490b; }
+    .main-card { padding: 28px; min-height: 380px; }
+    .side-card { padding: 24px; }
+    .hidden { display: none !important; }
+    .login-wrap { max-width: 390px; margin: 33px auto 0; }
+    .login-wrap h2, .section-title { margin: 0 0 8px; font-size: 20px; letter-spacing: -.025em; }
+    .muted { margin: 0 0 24px; color: #748094; font-size: 14px; line-height: 1.55; }
+    label { display: block; margin-bottom: 8px; color: #4b5565; font-size: 13px; font-weight: 650; }
+    input {
+      width: 100%; height: 49px; padding: 0 14px; border: 1px solid #d6dbe4;
+      border-radius: 10px; outline: none; background: white; color: #172033;
+    }
+    input:focus { border-color: #85b72c; box-shadow: 0 0 0 3px #c9f36a44; }
+    .primary, .secondary, .quiet {
+      border: 0; border-radius: 10px; cursor: pointer; font-weight: 700;
+      transition: transform .12s, background .12s;
+    }
+    .primary { width: 100%; min-height: 48px; margin-top: 15px; background: #c9f36a; color: #1d2b12; }
+    .primary:hover { background: #b7e650; }
+    button:active { transform: translateY(1px); }
+    button:disabled { cursor: wait; opacity: .7; }
+    .notice { min-height: 21px; margin-top: 13px; color: #a23c34; font-size: 13px; }
+    .balance-label { color: #667085; font-size: 13px; font-weight: 650; }
+    .balance { margin: 8px 0 23px; font-size: clamp(34px, 6vw, 46px); font-weight: 750; letter-spacing: -.055em; }
+    .balance small { color: #737e90; font-size: 17px; font-weight: 500; letter-spacing: 0; }
+    .rule { height: 1px; margin: 22px 0; background: #edf0f3; }
+    .section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .section-heading .section-title { margin: 0; font-size: 16px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .action-box { padding: 16px; border: 1px solid #e7eaf0; border-radius: 12px; }
+    .action-box label { margin-bottom: 9px; }
+    .action-row { display: flex; gap: 8px; }
+    .action-row input { min-width: 0; height: 43px; }
+    .secondary { min-width: 78px; padding: 0 14px; background: #182131; color: white; }
+    .secondary:hover { background: #2a384e; }
+    .quiet { padding: 7px 0; background: none; color: #526174; font-size: 13px; }
+    .transaction { display: flex; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid #edf0f3; }
+    .transaction:last-child { border-bottom: 0; }
+    .transaction-name { margin-bottom: 4px; font-size: 13px; font-weight: 700; text-transform: capitalize; }
+    .transaction-date { color: #8791a0; font-size: 11px; }
+    .transaction-amount { white-space: nowrap; font-size: 13px; font-weight: 700; }
+    .positive { color: #4b7a16; }
+    .empty { padding: 22px 0 8px; color: #8a94a3; font-size: 13px; }
+    .disclaimer { margin: 24px 2px 0; color: #8590a0; font-size: 12px; line-height: 1.5; }
+    @media (max-width: 700px) {
+      main { margin: 36px auto; }
+      .layout { grid-template-columns: 1fr; }
+      .main-card { min-height: 0; padding: 22px; }
+      .side-card { padding: 22px; }
+      .login-wrap { margin-top: 16px; }
+    }
+    @media (max-width: 440px) {
+      .topbar { height: 66px; padding: 0 16px; }
+      .secure { font-size: 11px; }
+      .actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">N</span> northstar <span style="font-weight:400;color:#aeb9ca">ATM</span></div>
+    <div class="secure">● &nbsp; Secure session</div>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow">Everyday banking</div>
+      <h1>Your money, in reach.</h1>
+      <p class="subheading">A simple, secure way to manage your account.</p>
+    </section>
+    <div class="layout">
+      <section class="card main-card">
+        <form id="login-view" class="login-wrap">
+          <h2>Welcome back</h2>
+          <p class="muted">Enter your 4-digit PIN to access your account.</p>
+          <label for="pin">ATM PIN</label>
+          <input id="pin" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4,8}" maxlength="8" autocomplete="current-password" placeholder="Enter your PIN" required>
+          <button class="primary" type="submit">Sign in</button>
+          <div id="login-message" class="notice" role="status" aria-live="polite"></div>
+        </form>
+
+        <section id="account-view" class="hidden">
+          <div class="balance-label">Available balance</div>
+          <div id="balance" class="balance">$0.00 <small>USD</small></div>
+          <div class="rule"></div>
+          <div class="section-heading">
+            <h2 class="section-title">Quick actions</h2>
+            <button id="logout" class="quiet" type="button">Sign out</button>
+          </div>
+          <p class="muted" style="margin:6px 0 17px">Choose an amount to deposit or withdraw.</p>
+          <div class="actions">
+            <form class="action-box" data-kind="deposit">
+              <label for="deposit-amount">Deposit</label>
+              <div class="action-row">
+                <input id="deposit-amount" type="number" min="0.01" max="1000000" step="0.01" placeholder="$ Amount" required>
+                <button class="secondary" type="submit">Add</button>
+              </div>
+            </form>
+            <form class="action-box" data-kind="withdraw">
+              <label for="withdraw-amount">Withdraw</label>
+              <div class="action-row">
+                <input id="withdraw-amount" type="number" min="0.01" max="1000000" step="0.01" placeholder="$ Amount" required>
+                <button class="secondary" type="submit">Take</button>
+              </div>
+            </form>
+          </div>
+          <div id="action-message" class="notice" role="status" aria-live="polite"></div>
+        </section>
+      </section>
+      <aside class="card side-card">
+        <div class="section-heading">
+          <h2 class="section-title">Recent activity</h2>
+          <span style="color:#9099a7;font-size:12px">Last 8</span>
+        </div>
+        <div id="transactions" class="empty">Sign in to view your activity.</div>
+      </aside>
+    </div>
+    <p class="disclaimer">Demo ATM only — this application uses a local sample account and is not connected to a bank.</p>
+  </main>
+  <script>
+    const loginView = document.querySelector("#login-view");
+    const accountView = document.querySelector("#account-view");
+    const transactionsView = document.querySelector("#transactions");
+    const money = cents => new Intl.NumberFormat("en-US", {
+      style: "currency", currency: "USD"
+    }).format(cents / 100);
+
+    async function request(path, data) {
+      const response = await fetch(path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Something went wrong.");
+      return result;
+    }
+
+    function showNotice(id, message) {
+      document.querySelector(id).textContent = message;
+    }
+
+    async function refreshAccount() {
+      const response = await fetch("/api/account");
+      if (response.status === 401) {
+        loginView.classList.remove("hidden");
+        accountView.classList.add("hidden");
+        transactionsView.textContent = "Sign in to view your activity.";
+        return;
+      }
+      if (!response.ok) throw new Error("Could not load account details.");
+      const data = await response.json();
+      loginView.classList.add("hidden");
+      accountView.classList.remove("hidden");
+      document.querySelector("#balance").innerHTML =
+        `${money(data.balance_cents)} <small>USD</small>`;
+      transactionsView.replaceChildren();
+      if (data.transactions.length === 0) {
+        transactionsView.className = "empty";
+        transactionsView.textContent = "No transactions yet. Your activity will appear here.";
+        return;
+      }
+      transactionsView.className = "";
+      for (const transaction of data.transactions) {
+        const row = document.createElement("div");
+        row.className = "transaction";
+        const details = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "transaction-name";
+        name.textContent = transaction.kind;
+        const date = document.createElement("div");
+        date.className = "transaction-date";
+        date.textContent = new Date(transaction.created_at).toLocaleString();
+        details.append(name, date);
+        const amount = document.createElement("div");
+        amount.className = `transaction-amount ${transaction.kind === "deposit" ? "positive" : ""}`;
+        amount.textContent = `${transaction.kind === "deposit" ? "+" : "−"}${money(transaction.amount_cents)}`;
+        row.append(details, amount);
+        transactionsView.append(row);
+      }
+    }
+
+    loginView.addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = loginView.querySelector("button");
+      button.disabled = true;
+      showNotice("#login-message", "");
+      try {
+        await request("/api/login", { pin: document.querySelector("#pin").value });
+        document.querySelector("#pin").value = "";
+        await refreshAccount();
+      } catch (error) {
+        showNotice("#login-message", error.message);
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    document.querySelectorAll(".action-box").forEach(form => {
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const kind = form.dataset.kind;
+        const amount = Number(form.querySelector("input").value);
+        if (!Number.isFinite(amount) || amount <= 0) return;
+        const button = form.querySelector("button");
+        button.disabled = true;
+        showNotice("#action-message", "");
+        try {
+          await request(`/api/${kind}`, { amount_cents: Math.round(amount * 100) });
+          form.reset();
+          await refreshAccount();
+          showNotice("#action-message", `${kind === "deposit" ? "Deposit" : "Withdrawal"} complete.`);
+        } catch (error) {
+          showNotice("#action-message", error.message);
+        } finally {
+          button.disabled = false;
+        }
+      });
+    });
+
+    document.querySelector("#logout").addEventListener("click", async () => {
+      try {
+        await request("/api/logout", {});
+        await refreshAccount();
+      } catch (error) {
+        showNotice("#action-message", error.message);
+      }
+    });
+
+    refreshAccount().catch(error => {
+      showNotice("#login-message", error.message);
+    });
+  </script>
+</body>
+</html>
